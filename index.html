@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: rgb(0, 110, 130);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 1200px;
+            min-width: 370px;
+            max-width: 370px;
+            max-height: 1200px;
+            overflow: hidden;
+            overflow-x: hidden;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .line{
+            width: 20px;
+            height: 20px;
+            border: 2px solid #514f38;
+            margin: -1px;
+            padding: 0;
+            background-color: rgb(6, 255, 14);
+            background-color: rgb(92, 106, 106);
+        }
+        .bigline{
+            display: flex;
+            text-align: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        button{
+            width: 60px;
+            height: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div id="a1" style="margin: 10px;">
+    </div>
+    <div id="btncontrol">
+        <button onclick="up(); print();" >up</button>
+        <button onclick="down(); print();" >down</button>
+        <button onclick="left(); print();" >left</button>
+        <button onclick="right(); print();" >right</button>
+    </div>
+    <script>
+        let areasize = 17;
+        let size_s = Array(areasize * areasize).fill(0);
+        let snake_location = Math.random() * (areasize * areasize);
+        console.log(snake_location);
+        let snake = [];
+        for(let y = 0 ; y < areasize ; y++){
+            let nameline = 'y' + y;
+            let linecontainer = document.getElementById('a1');
+            let newdiv = document.createElement('div');
+            newdiv.id = nameline;
+            newdiv.className = 'bigline';
+            linecontainer.appendChild(newdiv);
+            for(let x = 0 ; x < areasize ; x++){
+                let line = 'x' + ( x + y * areasize);
+                let container = document.getElementById(nameline);
+                let newSpan = document.createElement('span');
+                newSpan.id = line;
+                newSpan.className = 'line';
+                container.appendChild(newSpan);
+            }
+        }
+        for(let v = 0 ; v < areasize * areasize ; v++){
+            if(v > snake_location){
+                size_s[v] = 1;
+                snake = [v];
+                console.log(snake[snake.length - 1]);
+                break;
+            }
+        }
+        function foodlocation() {
+            let food_bool = size_s.includes(0);
+            let food_num = size_s.filter(item => item === 2).length >= 5;
+            if(food_bool && (!food_num)){
+                let food_location = Math.random() * (areasize * areasize);
+                let food_location_int = Math.floor(food_location);
+                if(size_s[food_location_int] == 0){
+                    size_s[food_location_int] = 2;
+                }else{
+                    console.log('break!');
+                    foodlocation();
+                }
+            }
+        }
+        function print(){
+            for(let v = 0 ; v < areasize * areasize ; v++){
+                if(size_s[v] == 1){
+                    let snake_l = 'x' + v;
+                    document.getElementById(snake_l).style.backgroundColor = 'rgb(6, 255, 14)' ;
+                }else if(size_s[v] == 2){
+                    let snake_l = 'x' + v;
+                    document.getElementById(snake_l).style.backgroundColor = 'rgb(197, 48, 37)' ;
+                }else{
+                    let snake_l = 'x' + v;
+                    document.getElementById(snake_l).style.backgroundColor = 'rgb(92, 106, 106)' ;
+                }
+            }
+        }
+        print();
+        function up(){
+            if(!(snake[snake.length - 1] < areasize)){
+                console.log(snake[snake.length - 1]);
+                if(size_s[(snake[snake.length - 1]) - areasize] == 0){
+                    size_s[(snake[snake.length - 1]) - areasize] = 1;
+                    size_s[snake[0]] = 0;
+                    snake.push((snake[snake.length - 1]) - areasize);
+                    snake.shift();
+                }else if(size_s[(snake[snake.length - 1]) - areasize] == 2){
+                    size_s[(snake[snake.length - 1]) - areasize] = 1;
+                    snake.push((snake[snake.length - 1]) - areasize);
+                }else{
+                    return;
+                }
+                foodlocation();
+            }
+        }
+        function down(){
+            if(!(snake[snake.length - 1] > areasize * areasize - areasize)){
+                console.log(snake[snake.length - 1]);
+                if(size_s[(snake[snake.length - 1]) + areasize] == 0){
+                    size_s[(snake[snake.length - 1]) + areasize] = 1;
+                    size_s[snake[0]] = 0;
+                    snake.push((snake[snake.length - 1]) + areasize);
+                    snake.shift();
+                }else if(size_s[(snake[snake.length - 1]) + areasize] == 2){
+                    size_s[(snake[snake.length - 1]) + areasize] = 1;
+                    snake.push((snake[snake.length - 1]) + areasize);
+                }else{
+                    return;
+                }
+                foodlocation();
+            } 
+        }
+        function left(){
+            if(!((snake[snake.length - 1] % areasize) == 0)){
+                console.log(snake[snake.length - 1]);
+                if(size_s[(snake[snake.length - 1]) - 1] == 0){
+                    size_s[(snake[snake.length - 1]) - 1] = 1;
+                    size_s[snake[0]] = 0;
+                    snake.push((snake[snake.length - 1]) - 1);
+                    snake.shift();
+                }else if(size_s[(snake[snake.length - 1]) - 1] == 2){
+                    size_s[(snake[snake.length - 1]) - 1] = 1;
+                    snake.push((snake[snake.length - 1]) - 1);
+                }else{
+                    return;
+                }
+                foodlocation();
+            } 
+        }
+        function right(){
+            let bool = ((snake[snake.length - 1] - areasize + 1 ) % areasize ) == 0;
+            if(!bool){
+                console.log(snake[snake.length - 1]);
+                if(size_s[(snake[snake.length - 1]) + 1] == 0){
+                    size_s[(snake[snake.length - 1]) + 1] = 1;
+                    size_s[snake[0]] = 0;
+                    snake.push((snake[snake.length - 1]) + 1);
+                    snake.shift();
+                }else if(size_s[(snake[snake.length - 1]) + 1] == 2){
+                    size_s[(snake[snake.length - 1]) + 1] = 1;
+                    snake.push((snake[snake.length - 1]) + 1);
+                }else{
+                    return;
+                }
+                foodlocation();
+            } 
+        }
+    </script>
+</body>
+</html>
